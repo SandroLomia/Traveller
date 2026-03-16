@@ -8,9 +8,9 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  --primary: #0ea5e9; /* sky-500 */
-  --secondary: #f59e0b; /* amber-500 */
-  --accent: #14b8a6; /* teal-500 */
+  --primary: #0ea5e9;
+  --secondary: #f59e0b;
+  --accent: #14b8a6;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -20,10 +20,30 @@
   }
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+.app-texture {
+  background-image:
+    radial-gradient(circle at 16% 20%, rgb(14 165 233 / 0.08), transparent 20%),
+    radial-gradient(circle at 85% 0%, rgb(20 184 166 / 0.08), transparent 22%),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.9), rgb(248 250 252 / 0.95));
+}
+
+@media (prefers-color-scheme: dark) {
+  .app-texture {
+    background-image:
+      radial-gradient(circle at 15% 10%, rgb(14 165 233 / 0.16), transparent 24%),
+      radial-gradient(circle at 80% 5%, rgb(20 184 166 / 0.12), transparent 26%),
+      linear-gradient(to bottom, rgb(2 6 23 / 0.95), rgb(3 7 18 / 0.98));
+  }
 }
 
 .travel-gradient {
