@@ -14,9 +14,10 @@ interface Location {
 
 interface ChatSectionProps {
   onAddLocation: (location: Location) => void;
+  onInteractionSound?: () => void;
 }
 
-export default function ChatSection({ onAddLocation }: ChatSectionProps) {
+export default function ChatSection({ onAddLocation, onInteractionSound }: ChatSectionProps) {
   const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
     api: '/api/chat',
     onToolCall({ toolCall }) {
@@ -51,13 +52,19 @@ export default function ChatSection({ onAddLocation }: ChatSectionProps) {
             <p className="text-zinc-500">Ask me anything about your next trip!</p>
             <div className="flex flex-wrap justify-center gap-2">
               <button
-                onClick={() => handleInputChange({ target: { value: 'Suggest a 3-day trip to Tokyo' } } as unknown as React.ChangeEvent<HTMLInputElement>)}
+                onClick={() => {
+                  onInteractionSound?.();
+                  handleInputChange({ target: { value: 'Suggest a 3-day trip to Tokyo' } } as unknown as React.ChangeEvent<HTMLInputElement>);
+                }}
                 className="text-xs bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 px-3 py-1 rounded-full transition-colors"
               >
                 Tokyo trip
               </button>
               <button
-                onClick={() => handleInputChange({ target: { value: 'What are the best beaches in Italy?' } } as unknown as React.ChangeEvent<HTMLInputElement>)}
+                onClick={() => {
+                  onInteractionSound?.();
+                  handleInputChange({ target: { value: 'What are the best beaches in Italy?' } } as unknown as React.ChangeEvent<HTMLInputElement>);
+                }}
                 className="text-xs bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 px-3 py-1 rounded-full transition-colors"
               >
                 Italy beaches
@@ -121,7 +128,13 @@ export default function ChatSection({ onAddLocation }: ChatSectionProps) {
         )}
       </div>
 
-      <form onSubmit={handleSubmit} className="p-4 border-t border-zinc-200 dark:border-zinc-800 flex gap-2">
+      <form
+        onSubmit={(event) => {
+          onInteractionSound?.();
+          handleSubmit(event);
+        }}
+        className="p-4 border-t border-zinc-200 dark:border-zinc-800 flex gap-2"
+      >
         <input
           value={input}
           onChange={handleInputChange}
