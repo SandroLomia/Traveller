@@ -12,6 +12,7 @@ interface Location {
 
 interface MapSectionProps {
   locations: Location[];
+  onMarkerFocus?: () => void;
 }
 
 const containerStyle = {
@@ -24,7 +25,7 @@ const defaultCenter = {
   lng: 0,
 };
 
-export default function MapSection({ locations }: MapSectionProps) {
+export default function MapSection({ locations, onMarkerFocus }: MapSectionProps) {
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
@@ -49,18 +50,18 @@ export default function MapSection({ locations }: MapSectionProps) {
       });
       map.fitBounds(bounds);
 
-      // Don't zoom in too much if there is only one location
       if (locations.length === 1) {
         map.setZoom(12);
       }
     }
   }, [map, locations]);
 
-  if (!isLoaded) return (
-    <div className="w-full h-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center rounded-2xl animate-pulse">
-      <p className="text-zinc-500">Loading Map...</p>
-    </div>
-  );
+  if (!isLoaded)
+    return (
+      <div className="w-full h-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center rounded-2xl animate-pulse">
+        <p className="text-zinc-500">Loading Map...</p>
+      </div>
+    );
 
   return (
     <div className="w-full h-full rounded-2xl overflow-hidden shadow-xl border border-zinc-200 dark:border-zinc-800">
@@ -71,21 +72,41 @@ export default function MapSection({ locations }: MapSectionProps) {
         onLoad={onLoad}
         onUnmount={onUnmount}
         options={{
+          gestureHandling: 'greedy',
+          zoomControl: true,
+          streetViewControl: true,
+          mapTypeControl: false,
+          fullscreenControl: true,
           styles: [
             {
               featureType: 'all',
               elementType: 'geometry',
-              stylers: [{ color: '#242f3e' }],
+              stylers: [{ color: '#1e293b' }, { saturation: -15 }],
+            },
+            {
+              featureType: 'water',
+              elementType: 'geometry',
+              stylers: [{ color: '#0f172a' }, { lightness: 8 }],
+            },
+            {
+              featureType: 'landscape.natural',
+              elementType: 'geometry',
+              stylers: [{ color: '#334155' }],
+            },
+            {
+              featureType: 'road',
+              elementType: 'geometry',
+              stylers: [{ color: '#475569' }],
             },
             {
               featureType: 'all',
               elementType: 'labels.text.stroke',
-              stylers: [{ color: '#242f3e' }],
+              stylers: [{ color: '#0f172a' }],
             },
             {
               featureType: 'all',
               elementType: 'labels.text.fill',
-              stylers: [{ color: '#746855' }],
+              stylers: [{ color: '#cbd5e1' }],
             },
           ],
         }}
@@ -94,7 +115,10 @@ export default function MapSection({ locations }: MapSectionProps) {
           <Marker
             key={`${loc.name}-${index}`}
             position={{ lat: loc.lat, lng: loc.lng }}
-            onClick={() => setSelectedPlace(loc)}
+            onClick={() => {
+              onMarkerFocus?.();
+              setSelectedPlace(loc);
+            }}
             animation={window.google.maps.Animation.DROP}
           />
         ))}
